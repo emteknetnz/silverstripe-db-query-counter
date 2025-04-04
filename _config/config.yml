@@ -1,0 +1,7 @@
+---
+Name: emteknetnz-query-counter
+After: databaseconnectors
+---
+SilverStripe\Core\Injector\Injector:
+  MySQLiConnector:
+    class: 'emteknetnz\DBQueryCounter\DBQueryMySQLiConnector'

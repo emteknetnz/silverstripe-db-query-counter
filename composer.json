@@ -1,0 +1,16 @@
+{
+    "name": "emteknetnz/db-query-counter",
+    "description": "A SilverStripe module for query counting.",
+    "type": "silverstripe-vendormodule",
+    "license": "MIT",
+    "require": {
+        "silverstripe/framework": "^5"
+    },
+    "autoload": {
+        "psr-4": {
+            "emteknetnz\\DBQueryCounter\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
