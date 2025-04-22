@@ -5,3 +5,7 @@ After: databaseconnectors
 SilverStripe\Core\Injector\Injector:
   MySQLiConnector:
     class: 'emteknetnz\DBQueryCounter\DBQueryMySQLiConnector'
+  SilverStripe\Control\Director:
+    properties:
+      Middlewares:
+        DBQueryCounterMiddleware: '%$emteknetnz\DBQueryCounter\DBQueryCounterMiddleware'

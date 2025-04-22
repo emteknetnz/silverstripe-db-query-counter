@@ -21,6 +21,13 @@ vendor/bin/sake dev/tasks flush=1
 - To reset the query log, add `?reset=1` to the URL
 - The view a report of the queries, run `vendor/bin/sake dev/tasks/QueryCounterTask` from the command line.
 
+By default a `report.txt` file will be written to the system temporary directory. To change where this file is written:
+
+```yml
+emteknetnz\DBQueryCounter\DBQueryCounterTask:
+  outfile: /path/to/report.txt
+```
+
 ## Notes
 
 - The log and report are written to the system temp directory

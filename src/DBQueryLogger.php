@@ -2,6 +2,7 @@
 
 namespace emteknetnz\DBQueryCounter;
 
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Path;
 
 class DBQueryLogger
@@ -16,7 +17,7 @@ class DBQueryLogger
 
     public function log($sql)
     {
-        if (!isset($_GET['log'])) {
+        if (!$this->do('log')) {
             return;
         }
         $sql = preg_replace("#\s+#", ' ', $sql);
@@ -31,6 +32,11 @@ class DBQueryLogger
     public function reset()
     {
         file_put_contents($this->getLogFilePath(), '');
+    }
+
+    private function do(string $key): bool
+    {
+        return (bool) Controller::curr()?->getRequest()?->getSession()?->get($key);
     }
 
     private function ensureLogFileExists()
