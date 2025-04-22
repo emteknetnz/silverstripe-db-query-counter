@@ -4,9 +4,9 @@ namespace emteknetnz\DBQueryCounter;
 
 use SilverStripe\Core\Path;
 
-trait DBQuerCounterTaskTrait
+trait DBQueryCounterTaskTrait
 {
-    protected $title = 'DB Query Counter Task';
+    private static $segment = 'DBQueryCounterTask';
 
     private function getQueryCounts(): array
     {

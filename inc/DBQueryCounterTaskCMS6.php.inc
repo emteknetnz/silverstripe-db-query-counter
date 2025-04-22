@@ -1,23 +1,20 @@
 <?php
 
-namespace emteknetnz\DBQueryCounter;
-
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\PolyExecution\PolyOutput;
 use Symfony\Component\Console\Input\InputInterface;
+use emteknetnz\DBQueryCounter\DBQueryCounterTaskTrait;
 
-// CMS 6 class not in CMS 5
-if (!class_exists(PolyOutput::class)) {
-    return;
-}
-
-class DBQueryCounterTaskCMS6 extends BuildTask
+class DBQueryCounterTask extends BuildTask
 {
-    use DBQuerCounterTaskTrait;
+    use DBQueryCounterTaskTrait;
+
+    protected string $title = 'DB Query Counter Task';
 
     protected function execute(InputInterface $input, PolyOutput $output): int
     {
         $queryCounts = $this->getQueryCounts();
         $this->writeReport($queryCounts);
+        return 0;
     }
 }
