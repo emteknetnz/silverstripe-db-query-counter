@@ -2,20 +2,11 @@
 
 namespace emteknetnz\DBQueryCounter;
 
-use SilverStripe\Dev\BuildTask;
 use SilverStripe\Core\Path;
 
-class DBQueryCounterTask extends BuildTask
+trait DBQuerCounterTaskTrait
 {
     protected $title = 'DB Query Counter Task';
-
-    private static $segment = 'DBQueryCounterTask';
-
-    public function run($request)
-    {
-        $queryCounts = $this->getQueryCounts();
-        $this->writeReport($queryCounts);
-    }
 
     private function getQueryCounts(): array
     {
