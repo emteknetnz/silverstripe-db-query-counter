@@ -5,7 +5,7 @@ This is a SilverStripe module for counting the number of database queries made.
 ## Installation
 
 ```bash
-composer require emteknetnz/db-query-counter
+composer require emteknetnz/silverstripe-db-query-counter
 ```
 
 And then flush.

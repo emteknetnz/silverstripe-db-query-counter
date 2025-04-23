@@ -1,5 +1,5 @@
 {
-    "name": "emteknetnz/db-query-counter",
+    "name": "emteknetnz/silverstripe-db-query-counter",
     "description": "A SilverStripe module for query counting.",
     "type": "silverstripe-vendormodule",
     "license": "MIT",
