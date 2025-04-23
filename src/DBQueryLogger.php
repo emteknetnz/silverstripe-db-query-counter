@@ -3,10 +3,15 @@
 namespace emteknetnz\DBQueryCounter;
 
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Path;
 
 class DBQueryLogger
 {
+    use Configurable;
+
+    private static int $trace_depth = 10;
+
     public function __construct()
     {
         $this->ensureLogFileExists();
@@ -17,12 +22,20 @@ class DBQueryLogger
         if (!$this->sessionVal('log')) {
             return;
         }
-        $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 20);
+        $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 50);
         $trace = $this->filterTrace($trace);
-        $arr = $trace[0];
-        $callee = !array_key_exists('file', $arr) ? '' : $arr['file'] . ':' . $arr['line'];
+        $callees = [];
+        $depth = DBQueryLogger::config()->get('trace_depth');
+        for ($i = 0; $i < $depth; $i++) {
+            if (!array_key_exists($i, $trace)) {
+                continue;
+            }
+            $arr = $trace[$i];
+            $callees[] = $arr['file'] . ':' . $arr['line'];
+        }
         $sql = preg_replace("#\s+#", ' ', $sql);
-        file_put_contents($this->getLogFilePath(), "$sql - $callee\n", FILE_APPEND);
+        $line = implode(PHP_EOL, [$sql, ...$callees]) . PHP_EOL . PHP_EOL;
+        file_put_contents($this->getLogFilePath(), $line, FILE_APPEND);
     }
 
     public static function getLogFilePath()
@@ -38,6 +51,9 @@ class DBQueryLogger
     private function filterTrace(array $trace)
     {
         return array_values(array_filter($trace, function($arr) {
+            if (!array_key_exists('file', $arr)) {
+                return false;
+            }
             if (array_key_exists('class', $arr)) {
                 $strs = [
                     'emteknetnz\\DBQueryCounter\\',
@@ -49,17 +65,19 @@ class DBQueryLogger
                     }
                 }
             }
-            if (array_key_exists('file', $arr)) {
-                $strs = [
-                    'silverstripe/framework/src/ORM/DataQuery.php',
-                    'silverstripe/framework/src/ORM/DataList.php',
-                    'silverstripe/framework/src/ORM/Queries/SQLExpression.php',
-                    'silverstripe/framework/src/ORM/DB.php',
-                ];
-                foreach ($strs as $str) {
-                    if (str_contains($arr['file'], $str)) {
-                        return false;
-                    }
+            $strs = [
+                'silverstripe/framework/src/ORM/DataQuery.php',
+                'silverstripe/framework/src/ORM/DataList.php',
+                'silverstripe/framework/src/ORM/Queries/SQLExpression.php',
+                'silverstripe/framework/src/ORM/DB.php',
+                'silverstripe/framework/src/Model/List/ArrayList.php', // todo CMS5
+                'silverstripe/framework/src/Core/Extensible.php',
+                'silverstripe/framework/src/Core/CustomMethods.php',
+                'silverstripe/framework/src/Core/Extension.php',
+            ];
+            foreach ($strs as $str) {
+                if (str_contains($arr['file'], $str)) {
+                    return false;
                 }
             }
             return true;

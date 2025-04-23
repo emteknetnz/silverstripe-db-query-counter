@@ -21,9 +21,9 @@ class DBQueryReportWriter
     {
         $queryCounts = [];
         $logFile = DBQueryLogger::getLogFilePath();
-        $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            $query = trim($line);
+        $contents = file_get_contents($logFile);
+        foreach (explode(PHP_EOL . PHP_EOL, $contents) as $query) {
+            $query = trim($query);
             if (!empty($query)) {
                 if (!isset($queryCounts[$query])) {
                     $queryCounts[$query] = 0;
