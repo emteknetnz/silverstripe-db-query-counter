@@ -28,7 +28,7 @@ emteknetnz\DBQueryCounter\DBQueryReportWriter:
   outfile: /path/to/report.txt
 ```
 
-To help find out what triggered the DB query, this report will include a stack trace of callees, with common core clases such as ORM classes filtered out. By default this will be done to a depth of 10, though this is configurable, which can be useful for grouping simliar queries. Note this has no impact on performance, only on what's reported:
+To help find out what triggered the DB query, this report will include a stack trace of callees, with common core classes such as ORM classes filtered out. By default this will be done to a depth of 10, though this is configurable, which can be useful for grouping similar queries. Note this has no impact on performance, only on what's reported:
 
 ```yml
 emteknetnz\DBQueryCounter\DBQueryLogger:
