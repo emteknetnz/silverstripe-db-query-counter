@@ -9,16 +9,13 @@ use emteknetnz\DBQueryCounter\DBQueryCounterTaskTrait;
 
 class DBQueryCounterTask extends BuildTask
 {
-    use DBQueryCounterTaskTrait;
-
     protected string $title = 'DB Query Counter Task';
 
     protected static string $commandName = 'DBQueryCounterTask';
 
     protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        $queryCounts = $this->getQueryCounts();
-        $this->writeReport($queryCounts);
+        (new DBQueryReportWriter)->run();
         return 0;
     }
 }

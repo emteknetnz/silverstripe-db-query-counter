@@ -8,4 +8,4 @@ SilverStripe\Core\Injector\Injector:
   SilverStripe\Control\Director:
     properties:
       Middlewares:
-        DBQueryCounterMiddleware: '%$emteknetnz\DBQueryCounter\DBQueryCounterMiddleware'
+        DBQueryMiddleware: '%$emteknetnz\DBQueryCounter\DBQueryMiddleware'

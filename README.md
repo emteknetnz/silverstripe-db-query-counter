@@ -24,7 +24,7 @@ vendor/bin/sake dev/tasks flush=1
 By default a `report.txt` file will be written to the system temporary directory. To change where this file is written:
 
 ```yml
-emteknetnz\DBQueryCounter\DBQueryCounterTask:
+emteknetnz\DBQueryCounter\DBQueryReportWriter:
   outfile: /path/to/report.txt
 ```
 
