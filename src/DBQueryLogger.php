@@ -17,18 +17,53 @@ class DBQueryLogger
         if (!$this->sessionVal('log')) {
             return;
         }
+        $trace = debug_backtrace(options: DEBUG_BACKTRACE_IGNORE_ARGS, limit: 20);
+        $trace = $this->filterTrace($trace);
+        $arr = $trace[0];
+        $callee = !array_key_exists('file', $arr) ? '' : $arr['file'] . ':' . $arr['line'];
         $sql = preg_replace("#\s+#", ' ', $sql);
-        file_put_contents($this->getLogFilePath(), $sql . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->getLogFilePath(), "$sql - $callee\n", FILE_APPEND);
     }
 
     public static function getLogFilePath()
     {
         return Path::join(sys_get_temp_dir(), 'db-query-counter', 'queries.log');
     }
-
+    
     public static function reset()
     {
         file_put_contents(static:: getLogFilePath(), '');
+    }
+
+    private function filterTrace(array $trace)
+    {
+        return array_values(array_filter($trace, function($arr) {
+            if (array_key_exists('class', $arr)) {
+                $strs = [
+                    'emteknetnz\\DBQueryCounter\\',
+                    'SilverStripe\\ORM\\Connect\\',
+                ];
+                foreach ($strs as $str) {
+                    if (str_contains($arr['class'], $str)) {
+                        return false;
+                    }
+                }
+            }
+            if (array_key_exists('file', $arr)) {
+                $strs = [
+                    'silverstripe/framework/src/ORM/DataQuery.php',
+                    'silverstripe/framework/src/ORM/DataList.php',
+                    'silverstripe/framework/src/ORM/Queries/SQLExpression.php',
+                    'silverstripe/framework/src/ORM/DB.php',
+                ];
+                foreach ($strs as $str) {
+                    if (str_contains($arr['file'], $str)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }));
     }
 
     private function sessionVal(string $key): bool
