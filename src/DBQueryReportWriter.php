@@ -9,10 +9,6 @@ class DBQueryReportWriter
 {
     use Configurable;
 
-    public function __construct(
-        private bool $doEcho = true,
-    ) {}
-
     private static string $outfile = '';
 
     public function run()
@@ -50,33 +46,15 @@ class DBQueryReportWriter
         if (!is_dir(dirname($reportFile))) {
             mkdir(dirname($reportFile), 0777, true);
         }
-        $lines = [];
         $total = array_sum($queryCounts);
+        if ($total === 0) {
+            return;
+        }
+        $lines = [];
         $lines[] = "Total queries: $total";
         foreach ($queryCounts as $query => $count) {
             $lines[] = "Count: $count - Query: $query";
         }
-        if ($total == 0) {
-            $this->echo("Did not write to $reportFile as total is 0");
-            return;
-        }
         file_put_contents($reportFile, implode(PHP_EOL . PHP_EOL, $lines));
-        $this->echo("Wrote $total queries to $reportFile");
-        $intoFile = Path::join(BASE_PATH, 'report.txt');
-        if ($intoFile !== $reportFile) {
-            $this->echo(
-                "Report written to: $reportFile",
-                "To copy to root of project, run:",
-                "cat $reportFile > $intoFile"
-            );
-        }
-    }
-
-    private function echo(string ...$lines): void
-    {
-        if (!$this->doEcho) {
-            return;
-        }
-        echo implode(PHP_EOL, $lines) . PHP_EOL;
     }
 }
