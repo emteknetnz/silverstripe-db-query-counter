@@ -33,6 +33,11 @@ class DBQueryLogger
 
     private function sessionVal(string $key): bool
     {
+        if (method_exists(Controller::class, 'has_curr')) {
+            if (!call_user_func([Controller::class, 'has_curr'])) {
+                return false;
+            }
+        }
         return (bool) Controller::curr()?->getRequest()?->getSession()?->get($key);
     }
 
