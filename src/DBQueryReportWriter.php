@@ -11,18 +11,28 @@ class DBQueryReportWriter
 
     private static string $outfile = '';
 
+    private static string $outfile_trace = '';
+
     public function run()
     {
-        $count = $this->getQueryCounts();
-        $this->writeReport($count);
+        $queryCounts = $this->getQueryCounts(false);
+        $this->writeReports(false, $queryCounts);
+        $queryCounts = $this->getQueryCounts(true);
+        $this->writeReports(true, $queryCounts);
     }
 
-    private function getQueryCounts(): array
+    private function getQueryCounts(bool $trace): array
     {
         $queryCounts = [];
-        $logFile = DBQueryLogger::getLogFilePath();
+        if ($trace) {
+            $logFile = DBQueryLogger::getLogTraceFilePath();
+            $seperator = PHP_EOL . PHP_EOL;
+        } else {
+            $logFile = DBQueryLogger::getLogFilePath();
+            $seperator = PHP_EOL;
+        }
         $contents = file_get_contents($logFile);
-        foreach (explode(PHP_EOL . PHP_EOL, $contents) as $query) {
+        foreach (explode($seperator, $contents) as $query) {
             $query = trim($query);
             if (!empty($query)) {
                 if (!isset($queryCounts[$query])) {
@@ -35,13 +45,21 @@ class DBQueryReportWriter
         return $queryCounts;
     }
 
-    private function writeReport(array $queryCounts): void
+    private function writeReports(bool $trace, array $queryCounts): void
     {
-        $outfile = DBQueryReportWriter::config()->get('outfile');
+        if ($trace) {
+            $outfile = DBQueryReportWriter::config()->get('outfile_trace');
+        } else {
+            $outfile = DBQueryReportWriter::config()->get('outfile');
+        }
         if ($outfile) {
             $reportFile = $outfile;
         } else {
-            $reportFile = Path::join(sys_get_temp_dir(), 'db-query-counter', 'report.txt');
+            if ($trace) {
+                $reportFile = Path::join(sys_get_temp_dir(), 'db-query-counter', 'report-trace.txt');
+            } else {
+                $reportFile = Path::join(sys_get_temp_dir(), 'db-query-counter', 'report.txt');
+            }
         }
         if (!is_dir(dirname($reportFile))) {
             mkdir(dirname($reportFile), 0777, true);

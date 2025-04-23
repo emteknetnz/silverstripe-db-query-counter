@@ -21,18 +21,19 @@ emteknetnz\DBQueryCounter\DBQueryMiddleware:
   redirect_seconds: 5
 ```
 
-By default a `/db-query-counter/report.txt` file will be written to the system temporary directory. To change where this file is written:
+By default two files `/db-query-counter/report.txt` and `/db-query-counter/report-trace.txt` will be written to the system temporary directory. To change where these files are written:
 
 ```yml
 emteknetnz\DBQueryCounter\DBQueryReportWriter:
   outfile: /path/to/report.txt
+  outfile: /path/to/report-trace.txt
 ```
 
-To help find out what triggered the DB query, this report will include a stack trace of callees, with common core classes such as ORM classes filtered out. By default this will be done to a depth of 10, though this is configurable, which can be useful for grouping similar queries. Note this has no impact on performance, only on what's reported:
+To help find out what triggered the DB query, `report-trace.txt` file include a stack trace of callees, with common core classes such as ORM classes filtered out. By default this will be done to a depth of 10, though this is configurable, which can be useful for grouping similar queries. Note this has no impact on performance, only on what's reported:
 
 ```yml
 emteknetnz\DBQueryCounter\DBQueryLogger:
-  trace_depth: 0
+  trace_depth: 3
 ```
 
 ## Notes

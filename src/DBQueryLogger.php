@@ -14,7 +14,7 @@ class DBQueryLogger
 
     public function __construct()
     {
-        $this->ensureLogFileExists();
+        $this->ensureLogFilesExist();
     }
 
     public function log($sql)
@@ -34,18 +34,25 @@ class DBQueryLogger
             $callees[] = $arr['file'] . ':' . $arr['line'];
         }
         $sql = preg_replace("#\s+#", ' ', $sql);
+        file_put_contents($this->getLogFilePath(), $sql . PHP_EOL, FILE_APPEND);
         $line = implode(PHP_EOL, [$sql, ...$callees]) . PHP_EOL . PHP_EOL;
-        file_put_contents($this->getLogFilePath(), $line, FILE_APPEND);
+        file_put_contents($this->getLogTraceFilePath(), $line, FILE_APPEND);
     }
 
     public static function getLogFilePath()
     {
         return Path::join(sys_get_temp_dir(), 'db-query-counter', 'queries.log');
     }
+
+    public static function getLogTraceFilePath()
+    {
+        return Path::join(sys_get_temp_dir(), 'db-query-counter', 'queries-trace.log');
+    }
     
     public static function reset()
     {
         file_put_contents(static:: getLogFilePath(), '');
+        file_put_contents(static:: getLogTraceFilePath(), '');
     }
 
     private function filterTrace(array $trace)
@@ -94,7 +101,7 @@ class DBQueryLogger
         return (bool) Controller::curr()?->getRequest()?->getSession()?->get($key);
     }
 
-    private function ensureLogFileExists()
+    private function ensureLogFilesExist()
     {
         $logFile = $this->getLogFilePath();
         if (file_exists($logFile)) {
