@@ -34,7 +34,7 @@ class DBQueryLogger
             $callees[] = $arr['file'] . ':' . $arr['line'];
         }
         $sql = preg_replace("#\s+#", ' ', $sql);
-        file_put_contents($this->getLogFilePath(), $sql . PHP_EOL, FILE_APPEND);
+        file_put_contents($this->getLogFilePath(), $sql . PHP_EOL . PHP_EOL, FILE_APPEND);
         $line = implode(PHP_EOL, [$sql, ...$callees]) . PHP_EOL . PHP_EOL;
         file_put_contents($this->getLogTraceFilePath(), $line, FILE_APPEND);
     }

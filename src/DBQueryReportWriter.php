@@ -26,13 +26,11 @@ class DBQueryReportWriter
         $queryCounts = [];
         if ($trace) {
             $logFile = DBQueryLogger::getLogTraceFilePath();
-            $seperator = PHP_EOL . PHP_EOL;
         } else {
             $logFile = DBQueryLogger::getLogFilePath();
-            $seperator = PHP_EOL;
         }
         $contents = file_get_contents($logFile);
-        foreach (explode($seperator, $contents) as $query) {
+        foreach (explode(PHP_EOL . PHP_EOL, $contents) as $query) {
             $query = trim($query);
             if (!empty($query)) {
                 if (!isset($queryCounts[$query])) {
