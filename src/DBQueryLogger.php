@@ -89,6 +89,7 @@ class DBQueryLogger
                 }
             }
             $strs = [
+                'emteknetnz/silverstripe-db-query-counter/src/DBQueryMySQLiConnector.php',
                 'silverstripe/framework/src/ORM/DataQuery.php',
                 'silverstripe/framework/src/ORM/DataList.php',
                 'silverstripe/framework/src/ORM/Queries/SQLExpression.php',
