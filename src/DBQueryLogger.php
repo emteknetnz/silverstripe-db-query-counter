@@ -94,6 +94,7 @@ class DBQueryLogger
                 'silverstripe/framework/src/ORM/DataList.php',
                 'silverstripe/framework/src/ORM/Queries/SQLExpression.php',
                 'silverstripe/framework/src/ORM/DB.php',
+                'silverstripe/framework/src/ORM/Queries/SQLSelect.php',
                 'silverstripe/framework/src/Model/List/ArrayList.php', // todo CMS5
                 'silverstripe/framework/src/Core/Extensible.php',
                 'silverstripe/framework/src/Core/CustomMethods.php',

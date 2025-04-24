@@ -34,7 +34,7 @@ class DBQueryMiddleware implements HTTPMiddleware
                     $milliseconds = DBQueryMiddleware::config()->get('redirect_seconds') * 1000;
                     Requirements::customScript(implode(PHP_EOL, [
                         'setTimeout(function() {',
-                        '  document.location.href = document.location.href.replace("?log=1", "?log=0");',
+                        '  document.location.href = document.location.href.replace("?log=1", "?log=0").replace("&log=1", "&log=0");',
                         "}, $milliseconds);",
                     ]));
                 } else {
