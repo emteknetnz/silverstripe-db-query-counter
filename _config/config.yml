@@ -1,10 +1,15 @@
 ---
-Name: emteknetnz-query-counter
-After: databaseconnectors
+Name: emteknetnz-query-counter-db
+After: '#databaseconnectors'
 ---
 SilverStripe\Core\Injector\Injector:
   MySQLiConnector:
     class: 'emteknetnz\DBQueryCounter\DBQueryMySQLiConnector'
+---
+Name: emteknetnz-query-counter-middleware
+After: '#coresecurity'
+---
+SilverStripe\Core\Injector\Injector:
   SilverStripe\Control\Director:
     properties:
       Middlewares:
