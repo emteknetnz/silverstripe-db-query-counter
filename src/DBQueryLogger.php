@@ -12,13 +12,27 @@ class DBQueryLogger
 
     private static int $trace_depth = 10;
 
+    private static string $logfile = '';
+
+    private static string $logfile_trace = '';
+
     public function __construct()
     {
         $this->ensureLogFilesExist();
+        if (isset($_GET['log']) && $_GET['log'] == 1) {
+            $this->resetLogFiles();
+        }
     }
 
     public function log($sql)
     {
+        // this is necessary the base html request, we cannot rely soley on the
+        // session var as there may be some DB requests before the middleware has
+        // has a chance to change it from 1 to 0 after the redirect
+        if (isset($_GET['log']) && $_GET['log'] != 1) {
+            return;
+        }
+        // session var is used for xhr requests which do not have have ?log=1|0 suffixed
         if (!$this->sessionVal('log')) {
             return;
         }
@@ -41,18 +55,20 @@ class DBQueryLogger
 
     public static function getLogFilePath()
     {
-        return Path::join(sys_get_temp_dir(), 'db-query-counter', 'queries.log');
+        $logfile = DBQueryLogger::config()->get('logfile');
+        if ($logfile) {
+            return $logfile;
+        }
+        return Path::join(sys_get_temp_dir(), 'db-query-counter', 'queries.txt');
     }
 
     public static function getLogTraceFilePath()
     {
-        return Path::join(sys_get_temp_dir(), 'db-query-counter', 'queries-trace.log');
-    }
-    
-    public static function reset()
-    {
-        file_put_contents(static:: getLogFilePath(), '');
-        file_put_contents(static:: getLogTraceFilePath(), '');
+        $logfile = DBQueryLogger::config()->get('logfile_trace');
+        if ($logfile) {
+            return $logfile;
+        }
+        return Path::join(sys_get_temp_dir(), 'db-query-counter', 'queries-trace.txt');
     }
 
     private function filterTrace(array $trace)
@@ -101,16 +117,24 @@ class DBQueryLogger
         return (bool) Controller::curr()?->getRequest()?->getSession()?->get($key);
     }
 
-    private function ensureLogFilesExist()
+    private function ensureLogFilesExist(): void
     {
         $logFile = $this->getLogFilePath();
-        if (file_exists($logFile)) {
-            return;
-        }
         $logDir = dirname($logFile);
         if (!is_dir($logDir)) {
             mkdir($logDir, 0777, true);
         }
-        $this->reset();
+        if (!file_exists(static::getLogFilePath())) {
+            file_put_contents(static::getLogFilePath(), '');
+        }
+        if (!file_exists(static::getLogTraceFilePath())) {
+            file_put_contents(static::getLogTraceFilePath(), '');
+        }
+    }
+
+    private function resetLogFiles(): void
+    {
+        file_put_contents(static::getLogFilePath(), '');
+        file_put_contents(static::getLogTraceFilePath(), '');
     }
 }

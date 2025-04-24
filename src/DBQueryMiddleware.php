@@ -40,7 +40,6 @@ class DBQueryMiddleware implements HTTPMiddleware
                 } else {
                     // ?log=0
                     (new DBQueryReportWriter)->run();
-                    DBQueryLogger::reset();
                 }
             }
         }
