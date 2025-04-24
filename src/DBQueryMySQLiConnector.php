@@ -22,6 +22,11 @@ class DBQueryMySQLiConnector extends MySQLiConnector
 
     public function preparedQuery($sql, $parameters, $errorLevel = E_USER_ERROR)
     {
+        // mirror what happens in MySQLiConnector::preparedQuery
+        // do this to prevent double query logging
+        if (empty($parameters)) {
+            return $this->query($sql, $errorLevel);
+        }
         $this->logger->log($sql);
         return parent::preparedQuery($sql, $parameters, $errorLevel);
     }
