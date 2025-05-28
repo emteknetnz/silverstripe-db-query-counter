@@ -40,12 +40,32 @@ class DBQueryLogger
         $trace = $this->filterTrace($trace);
         $callees = [];
         $depth = DBQueryLogger::config()->get('trace_depth');
+
+        $methods = [];
+        for ($i = 0; $i < $depth; $i++) {
+            $j = $i + 1;
+            if (!array_key_exists($j, $trace)) {
+                continue;
+            }
+            $arr = $trace[$j];
+            if (!isset($arr['class']) || !isset($arr['function']) || !$arr['class'] || !$arr['function']) {
+                continue;
+            }
+            $parts = explode('\\', $arr['class']);
+            $shortClass = $parts[count($parts) - 1];
+            $methods[$j] = $shortClass . '::' . $arr['function'] . '()';
+        }
         for ($i = 0; $i < $depth; $i++) {
             if (!array_key_exists($i, $trace)) {
                 continue;
             }
             $arr = $trace[$i];
-            $callees[] = $arr['file'] . ':' . $arr['line'];
+            $str = $arr['file'] . ':' . $arr['line'];
+            $j = $i + 1;
+            if (isset($methods[$j])) {
+                $str .= ' [' . $methods[$j] . ']';
+            }
+            $callees[] = $str;
         }
         $sql = preg_replace("#\s+#", ' ', $sql);
         file_put_contents($this->getLogFilePath(), $sql . PHP_EOL . PHP_EOL, FILE_APPEND);
