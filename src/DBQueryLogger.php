@@ -60,7 +60,9 @@ class DBQueryLogger
                 continue;
             }
             $arr = $trace[$i];
-            $str = $arr['file'] . ':' . $arr['line'];
+            $file = $arr['file'];
+            $file = str_replace(BASE_PATH, '', $file);
+            $str = $file . ':' . $arr['line'];
             $j = $i + 1;
             if (isset($methods[$j])) {
                 $str .= ' [' . $methods[$j] . ']';
